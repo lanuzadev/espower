@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESPower - Gráficos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <script src="../js/theme.js"></script>
+</head>
+<body>
+  <div id="authOverlay" class="auth-overlay hidden"></div>
+  <div class="app-shell" id="appShell">
+    <!-- ══ Sidebar ══ -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <script src="../js/sidebar.js"></script>
+
+
+
+    <!-- ══ Main ══ -->
+    <main class="page" id="top">
+
+      <!-- Topbar -->
+      <header class="header topbar">
+        <div class="topbar-left">
+          <button id="sidebarToggle" class="icon-btn topbar-menu" type="button" aria-label="Abrir menú lateral">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <p class="topbar-eyebrow">Análisis energético</p>
+            <h2 class="h1 topbar-title">Gráficos de Consumo</h2>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-chip">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            <span class="small" id="topbarStatusText">Cargando…</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="section charts-page-section">
+
+        <!-- ── Insight chips ── -->
+        <div class="insights-row" id="insightsRow" aria-live="polite"></div>
+
+        <!-- ── Stat cards ── -->
+        <div class="chart-stats-row" id="chartStatsRow">
+          <div class="chart-stat-card csc-current">
+            <div class="chart-stat-icon csi-blue"><i data-lucide="calendar"></i></div>
+            <div>
+              <div class="chart-stat-label">Mes actual</div>
+              <div class="chart-stat-value" id="statCurrentVal">--</div>
+            </div>
+          </div>
+          <div class="chart-stat-card" id="statVsPrev">
+            <div class="chart-stat-icon"><i data-lucide="trending-up"></i></div>
+            <div>
+              <div class="chart-stat-label">vs mes anterior</div>
+              <div class="chart-stat-value" id="statVsPrevVal">--</div>
+            </div>
+          </div>
+          <div class="chart-stat-card">
+            <div class="chart-stat-icon"><i data-lucide="activity"></i></div>
+            <div>
+              <div class="chart-stat-label">vs promedio histórico</div>
+              <div class="chart-stat-value" id="statVsAvgVal">--</div>
+            </div>
+          </div>
+          <div class="chart-stat-card csc-cost">
+            <div class="chart-stat-icon csi-violet"><i data-lucide="wallet"></i></div>
+            <div>
+              <div class="chart-stat-label">Costo estimado (mes)</div>
+              <div class="chart-stat-value" id="statCostVal">--</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Main chart + Donut side-by-side ── -->
+        <div class="charts-dual-layout">
+
+          <!-- Main chart card -->
+          <div class="card charts-card charts-main-card">
+            <div class="charts-toolbar">
+              <div>
+                <div class="charts-card-title">Consumo energético</div>
+                <div class="charts-card-sub" id="chartSubLabel">Mes actual · por día</div>
+              </div>
+              <div class="charts-toolbar-right">
+                <div class="charts-filters" role="group" aria-label="Filtro de tiempo">
+                  <button class="chart-filter-btn" data-range="day"   type="button">Día</button>
+                  <button class="chart-filter-btn" data-range="week"  type="button">Semana</button>
+                  <button class="chart-filter-btn is-active" data-range="month" type="button">Mes</button>
+                  <button class="chart-filter-btn" data-range="year"  type="button">Año</button>
+                </div>
+                <button id="resetZoomBtn" class="chart-reset-btn" type="button" title="Restablecer zoom">
+                  <i data-lucide="zoom-out"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body charts-body">
+              <div class="charts-wrap-tall">
+                <canvas id="mainChart" aria-label="Gráfico de consumo" role="img"></canvas>
+              </div>
+              <div class="charts-empty" id="chartsEmpty" style="display:none">
+                <i data-lucide="bar-chart-2"></i>
+                <p>Sin datos para este período</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Donut chart card -->
+          <div class="card charts-card charts-donut-card">
+            <div class="charts-toolbar">
+              <div>
+                <div class="charts-card-title">Distribución mensual</div>
+                <div class="charts-card-sub">Últimos meses registrados</div>
+              </div>
+            </div>
+            <div class="card-body charts-donut-body">
+              <div class="charts-donut-wrap">
+                <canvas id="donutChart" aria-label="Gráfico de distribución" role="img"></canvas>
+                <!-- Center label -->
+                <div class="donut-center-label" id="donutCenterLabel">
+                  <div class="donut-center-value" id="donutCenterVal">--</div>
+                  <div class="donut-center-sub">Total kWh</div>
+                </div>
+              </div>
+              <!-- Legend -->
+              <div class="donut-legend" id="donutLegend"></div>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <footer class="footer">
+        <p class="small muted">© 2024 ESPower. Todos los derechos reservados.</p>
+      </footer>
+    </main>
+  </div>
+
+  <script type="module" src="../js/charts.js"></script>
+</body>
+</html>

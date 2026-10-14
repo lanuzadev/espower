@@ -1,0 +1,22 @@
+# Configuración local: nunca publicar credenciales ni identificadores del proyecto.
+js/firebase-config.local.js
+Firmware/Espower/config.local.h
+.env
+.env.*
+!.env.example
+
+# Secretos y artefactos locales.
+*.pem
+*.p12
+*.pfx
+*.key
+*.jks
+*.keystore
+service-account*.json
+firebase-adminsdk*.json
+credentials.json
+node_modules/
+dist/
+*.log
+.DS_Store
+Thumbs.db

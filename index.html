@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESPower Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <script src="js/theme.js"></script>
+</head>
+
+<body>
+  <div id="appShell" class="app-shell">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <script src="js/sidebar.js"></script>
+
+
+
+    <main class="page" id="top">
+      <header class="header topbar">
+        <div class="topbar-left">
+          <button id="sidebarToggle" class="icon-btn topbar-menu" type="button" aria-label="Abrir menú lateral">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <p class="topbar-eyebrow">Panel principal</p>
+            <h2 class="h1 topbar-title">Centro de monitoreo ESPower</h2>
+          </div>
+        </div>
+
+        <div class="header-right topbar-right">
+          <div class="topbar-chip">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            <span class="small" id="topbarStatusText">Esperando autenticación</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ═══ MODAL: Configurar Tarifas ═══ -->
+      <div id="tarifaModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="tarifaTitle">
+        <div class="modal-backdrop" data-close-tarifa></div>
+        <div class="modal-card" role="document">
+          <div class="modal-head">
+            <div>
+              <h2 id="tarifaTitle" class="h2" style="margin:0">Configurar Tarifas</h2>
+              <p class="muted" style="margin:.35rem 0 0">Ajustá el costo por kWh para tu región.</p>
+            </div>
+            <button class="icon-btn" type="button" data-close-tarifa aria-label="Cerrar">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="field">
+              <label class="label" for="tarifaInput">Costo por kWh (C$)</label>
+              <input id="tarifaInput" class="input" type="number" min="0" step="0.01" placeholder="6.85"
+                style="padding-left:.9rem" />
+            </div>
+            <div id="tarifaMsg" class="small muted"></div>
+            <div class="modal-actions">
+              <button id="tarifaSaveBtn" class="btn btn-primary" type="button">
+                <i data-lucide="save"></i> Guardar
+              </button>
+              <button class="btn btn-outline" type="button" data-close-tarifa>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ MODAL: Calendario de Lecturas ═══ -->
+      <div id="calModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="calTitle">
+        <div class="modal-backdrop" data-close-cal></div>
+        <div class="modal-card" role="document" style="max-width:520px">
+          <div class="modal-head">
+            <div>
+              <h2 id="calTitle" class="h2" style="margin:0">Calendario de Lecturas</h2>
+              <p class="muted" style="margin:.35rem 0 0">Días del mes con registros del datalogger.</p>
+            </div>
+            <button class="icon-btn" type="button" data-close-cal aria-label="Cerrar">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="calGrid" style="min-height:200px;display:flex;align-items:center;justify-content:center">
+              <span class="small muted">Cargando…</span>
+            </div>
+            <p class="small muted" style="margin-top:.75rem">
+              <span
+                style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--primary);margin-right:4px;vertical-align:middle"></span>
+              Día con al menos 1 lectura registrada
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monitoreo -->
+      <section class="section" id="monitoringSection">
+        <h2 class="h2">Monitoreo en Tiempo Real</h2>
+        <div id="monitoringGrid" class="grid-4"></div>
+      </section>
+
+      <!-- Control de dispositivos -->
+      <section class="section" id="devicesSection">
+        <h2 class="h2">Control de Dispositivos</h2>
+        <div id="deviceGrid" class="grid-4"></div>
+      </section>
+
+      <!-- Acumulados -->
+      <section class="section" id="summarySection">
+        <h2 class="h2">Acumulados y Costos</h2>
+        <div id="summaryGrid" class="grid-2"></div>
+      </section>
+
+      <!-- Charts + Logger -->
+      <div class="grid-3" id="chartSection">
+        <section class="section span-2">
+          <h2 class="h2">Gráficos de Consumo</h2>
+          <!-- Insights row (same as charts.html) -->
+          <div class="insights-row" id="dashInsightsRow" style="display:none"></div>
+          <div class="card">
+            <div class="card-head">
+              <div>
+                <h3 class="h3">Consumo Mensual</h3>
+                <p class="muted">Visualización del consumo energético histórico del año actual</p>
+              </div>
+            </div>
+            <!-- Info bar: siempre visible, se actualiza al pasar el mouse -->
+            <div class="chart-info-bar" id="dashChartInfoBar">
+              <div class="chart-info-item">
+                <span class="chart-info-label">Período</span>
+                <span class="chart-info-value">—</span>
+              </div>
+              <div class="chart-info-sep"></div>
+              <div class="chart-info-item">
+                <span class="chart-info-label">Consumo</span>
+                <span class="chart-info-value blue">—</span>
+              </div>
+              <div class="chart-info-sep"></div>
+              <div class="chart-info-item">
+                <span class="chart-info-label">Costo estimado</span>
+                <span class="chart-info-value violet">—</span>
+              </div>
+              <div class="chart-info-sep"></div>
+              <div class="chart-info-item">
+                <span class="chart-info-label">vs mes anterior</span>
+                <span class="chart-info-delta neutral">—</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="chart-wrap">
+                <canvas id="consumptionChart" aria-label="Gráfico de consumo" role="img"></canvas>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+        <section class="section">
+          <h2 class="h2">Estado del Sistema</h2>
+          <div class="card card-soft">
+            <div class="card-head">
+              <div>
+                <h3 class="h3" id="dataloggerTitle">Data Logger</h3>
+                <p class="muted">Últimas 20 lecturas · intervalo configurable en el menú</p>
+              </div>
+            </div>
+            <div class="card-body p-0">
+              <div class="log-feed" id="logScroll">
+                <div id="logBody"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Acciones Rápidas -->
+      <section class="section" id="actionsSection">
+        <h2 class="h2">Acciones Rápidas</h2>
+        <div class="actions">
+          <button id="btnDownload" class="btn btn-primary" type="button">
+            <i data-lucide="download"></i>
+            Descargar Reporte
+          </button>
+          <button id="btnCal" class="btn btn-secondary" type="button">
+            <i data-lucide="calendar-days"></i>
+            Calendario de Lecturas
+          </button>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p class="small muted">© 2024 ESPower. Todos los derechos reservados.</p>
+        <nav class="footer-links" aria-label="Enlaces">
+          <a href="#" class="link">Soporte</a>
+          <a href="#" class="link">Privacidad</a>
+          <a href="#" class="link">Configuración</a>
+        </nav>
+      </footer>
+    </main>
+
+    <div id="authOverlay" class="auth-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="authOverlayTitle">
+      <div class="auth-overlay-backdrop"></div>
+      <div class="auth-overlay-card">
+        <div class="auth-overlay-brand">
+          <div class="auth-overlay-logo-wrap">
+            <img src="assets/E.png" alt="Logo ESPower" class="auth-overlay-logo" />
+          </div>
+          <div>
+            <div class="auth-overlay-title-brand">ESPower</div>
+            <div class="auth-overlay-sub-brand">Sistema Inteligente de Gestión Energética</div>
+          </div>
+        </div>
+
+        <div class="auth-overlay-copy">
+          <h2 id="authOverlayTitle" class="login-title">Acceso protegido</h2>
+
+        </div>
+
+        <div class="error-box" id="overlayErrorBox" role="alert">
+          <i data-lucide="alert-circle"></i>
+          <span id="overlayErrorMsg"></span>
+        </div>
+
+        <form id="overlayLoginForm" autocomplete="on" novalidate>
+          <div class="field">
+            <label class="label" for="overlayEmail">Correo electrónico</label>
+            <div class="input-wrap">
+              <span class="input-icon"><i data-lucide="mail"></i></span>
+              <input id="overlayEmail" name="email" class="input auth-input" type="email" placeholder="tu@email.com"
+                autocomplete="email" required />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="overlayPassword">Contraseña</label>
+            <div class="input-wrap">
+              <span class="input-icon"><i data-lucide="lock"></i></span>
+              <input id="overlayPassword" name="password" class="input auth-input" type="password"
+                placeholder="••••••••" autocomplete="current-password" required />
+            </div>
+          </div>
+
+          <button id="overlayLoginBtn" class="btn-login" type="submit">
+            <i data-lucide="log-in"></i>
+            Iniciar sesión
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+
+</html>

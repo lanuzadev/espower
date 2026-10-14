@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESPower - Contacto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="../js/theme.js"></script>
+  <style>
+    /* ── Contact page specific styles ── */
+    .contact-hero {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    .contact-hero-icon {
+      width: 52px; height: 52px;
+      border-radius: 1.1rem;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: grid; place-items: center;
+      color: #fff; flex-shrink: 0;
+    }
+    .contact-hero-icon i { width: 26px; height: 26px; }
+    .contact-hero-title { font-family: Inter, sans-serif; font-size: 1.15rem; font-weight: 700; margin: 0; }
+    .contact-hero-sub   { font-size: .82rem; margin: .25rem 0 0; }
+
+    /* channel cards */
+    .contact-channels {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .channel-card {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: .65rem;
+      padding: 1.25rem 1.35rem;
+      border-radius: 1.1rem;
+      border: 1px solid color-mix(in oklab, var(--border) 50%, transparent);
+      background: var(--card);
+      text-decoration: none;
+      color: var(--foreground);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .channel-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(59,130,246,.13);
+    }
+    .channel-icon {
+      width: 44px; height: 44px;
+      border-radius: .95rem;
+      display: grid; place-items: center;
+      flex-shrink: 0;
+    }
+    .channel-icon i { width: 22px; height: 22px; }
+    .channel-icon.telegram  { background: linear-gradient(135deg,#00aff0,#0077c8); color:#fff; }
+    .channel-icon.whatsapp  { background: linear-gradient(135deg,#25d366,#128c7e); color:#fff; }
+    .channel-icon.email-ch  { background: linear-gradient(135deg,#3b82f6,#8b5cf6); color:#fff; }
+    .channel-icon.github-ch { background: linear-gradient(135deg,#24292e,#444d56); color:#fff; }
+    .channel-label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: color-mix(in oklab, var(--muted-foreground) 70%, transparent); }
+    .channel-value { font-size: .92rem; font-weight: 700; }
+
+    /* contact form */
+    .contact-form-card { padding: 1.5rem 1.75rem; border: 1px solid color-mix(in oklab, var(--border) 45%, transparent); }
+    .contact-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.1rem;
+    }
+    @media (max-width: 600px) {
+      .contact-form-grid { grid-template-columns: 1fr; }
+    }
+    .contact-form-grid .full { grid-column: 1 / -1; }
+    .contact-label { font-size: .8rem; font-weight: 700; display: block; margin-bottom: .35rem; }
+    .contact-input {
+      width: 100%;
+      padding: .75rem .9rem;
+      border-radius: .9rem;
+      border: 1.5px solid color-mix(in oklab, var(--border) 65%, transparent);
+      background: color-mix(in oklab, var(--background) 60%, transparent);
+      color: var(--foreground);
+      font-family: inherit;
+      font-size: .9rem;
+      transition: border-color .15s;
+      box-sizing: border-box;
+    }
+    .contact-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px color-mix(in srgb, #3b82f6 18%, transparent); }
+    textarea.contact-input { resize: vertical; min-height: 110px; }
+    .contact-actions { display: flex; justify-content: flex-end; margin-top: 1.25rem; }
+    .contact-sent { display: none; align-items: center; gap: .55rem; color: #22c55e; font-weight: 700; font-size: .9rem; margin-top: 1rem; }
+    .contact-sent.visible { display: flex; }
+  </style>
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <script src="../js/sidebar.js"></script>
+
+
+
+    <main class="page" id="top">
+      <header class="header topbar">
+        <div class="topbar-left">
+          <button id="sidebarToggle" class="icon-btn topbar-menu" type="button" aria-label="Abrir menú lateral">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <p class="topbar-eyebrow">Soporte</p>
+            <h2 class="h1 topbar-title">Contacto</h2>
+          </div>
+        </div>
+      </header>
+
+      <section class="section">
+
+        <!-- Hero -->
+        <div class="contact-hero">
+          <div class="contact-hero-icon"><i data-lucide="headphones"></i></div>
+          <div>
+            <h2 class="contact-hero-title">¿Necesitás ayuda con ESPower?</h2>
+            <p class="small muted contact-hero-sub">Estamos disponibles por Telegram, WhatsApp o correo electrónico para soporte técnico y consultas.</p>
+          </div>
+        </div>
+
+        <!-- Channel cards -->
+        <div class="contact-channels">
+          <a class="channel-card" href="https://t.me/espower_soporte" target="_blank" rel="noopener noreferrer">
+            <div class="channel-icon telegram"><i data-lucide="send"></i></div>
+            <div>
+              <div class="channel-label">Telegram</div>
+              <div class="channel-value">@espower_soporte</div>
+            </div>
+          </a>
+          <a class="channel-card" href="https://wa.me/50500000000" target="_blank" rel="noopener noreferrer">
+            <div class="channel-icon whatsapp"><i data-lucide="message-circle"></i></div>
+            <div>
+              <div class="channel-label">WhatsApp</div>
+              <div class="channel-value">+505 0000-0000</div>
+            </div>
+          </a>
+          <a class="channel-card" href="mailto:soporte@espower.ni">
+            <div class="channel-icon email-ch"><i data-lucide="mail"></i></div>
+            <div>
+              <div class="channel-label">Correo electrónico</div>
+              <div class="channel-value">soporte@espower.ni</div>
+            </div>
+          </a>
+          <a class="channel-card" href="https://github.com/lanuzadev/espower" target="_blank" rel="noopener noreferrer">
+            <div class="channel-icon github-ch"><i data-lucide="github"></i></div>
+            <div>
+              <div class="channel-label">GitHub</div>
+              <div class="channel-value">github.com/espower</div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Contact form -->
+        <h2 class="h2">Enviar un mensaje</h2>
+        <div class="card contact-form-card">
+          <form id="contactForm" novalidate>
+            <div class="contact-form-grid">
+              <div>
+                <label class="contact-label" for="cfNombre">Nombre</label>
+                <input id="cfNombre" class="contact-input" type="text" placeholder="Tu nombre" required />
+              </div>
+              <div>
+                <label class="contact-label" for="cfEmail">Correo electrónico</label>
+                <input id="cfEmail" class="contact-input" type="email" placeholder="tu@correo.com" required />
+              </div>
+              <div class="full">
+                <label class="contact-label" for="cfAsunto">Asunto</label>
+                <input id="cfAsunto" class="contact-input" type="text" placeholder="Ej: Error en lectura de voltaje" />
+              </div>
+              <div class="full">
+                <label class="contact-label" for="cfMensaje">Mensaje</label>
+                <textarea id="cfMensaje" class="contact-input" placeholder="Describe tu consulta o problema con el mayor detalle posible…" required></textarea>
+              </div>
+            </div>
+
+            <div class="contact-actions">
+              <button type="submit" class="btn btn-primary">
+                <i data-lucide="send"></i>
+                Enviar mensaje
+              </button>
+            </div>
+
+            <div class="contact-sent" id="contactSent">
+              <i data-lucide="check-circle"></i>
+              Mensaje enviado. Te responderemos a la brevedad.
+            </div>
+          </form>
+        </div>
+
+      </section>
+
+      <footer class="footer">
+        <p class="small muted">© 2024 ESPower. Todos los derechos reservados.</p>
+        <nav class="footer-links" aria-label="Enlaces">
+          <a href="../index.html" class="link">Dashboard</a>
+          <a href="config.html" class="link">Configuración</a>
+        </nav>
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // Contact form submit
+    document.getElementById('contactForm')?.addEventListener('submit', e => {
+      e.preventDefault();
+      const nombre  = document.getElementById('cfNombre').value.trim();
+      const email   = document.getElementById('cfEmail').value.trim();
+      const mensaje = document.getElementById('cfMensaje').value.trim();
+      if (!nombre || !email || !mensaje) {
+        alert('Por favor completá los campos requeridos.');
+        return;
+      }
+      document.getElementById('contactSent').classList.add('visible');
+      e.target.reset();
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+  <script type="module" src="../js/contact.js"></script>
+</body>
+</html>

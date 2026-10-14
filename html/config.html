@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ESPower - Configuración</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="../js/theme.js"></script>
+</head>
+
+<body>
+  <div id="authOverlay" class="auth-overlay hidden"></div>
+  <div class="app-shell" id="appShell">
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+    <script src="../js/sidebar.js"></script>
+
+    <main class="page" id="top">
+      <header class="header topbar">
+        <div class="topbar-left">
+          <button id="sidebarToggle" class="icon-btn topbar-menu" type="button" aria-label="Abrir menú lateral">
+            <i data-lucide="menu"></i>
+          </button>
+          <div>
+            <p class="topbar-eyebrow">Apartado</p>
+            <h2 class="h1 topbar-title">Configuración</h2>
+          </div>
+        </div>
+      </header>
+
+      <section class="section config-section">
+        <div class="config-hero">
+          <div class="config-hero-icon"><i data-lucide="sliders-horizontal"></i></div>
+          <div>
+            <h2 class="h2 config-hero-title">Parámetros del sistema</h2>
+            <p class="muted config-hero-sub">Ajusta reglas operativas, costos y calibración del sensor desde un solo lugar.</p>
+          </div>
+        </div>
+
+        <div class="card config-card">
+          <div class="config-group-head">
+            <h3 class="h3">Operación y costos</h3>
+            <p class="small muted">Parámetros principales de registro y facturación.</p>
+          </div>
+          <div class="card-body config-grid">
+            <div class="config-item">
+              <label class="label config-label" for="cfgDataloggerMinutes"><i data-lucide="timer"></i> Rango del Data Logger</label>
+              <div class="config-input-wrap">
+                <input id="cfgDataloggerMinutes" class="input config-input" type="number" min="1" max="1440" step="1" placeholder="15" />
+                <span class="config-unit">min</span>
+              </div>
+              <p class="small muted">Frecuencia de guardado en historial.</p>
+            </div>
+
+            <div class="config-item">
+              <label class="label config-label" for="cfgLimitKwh"><i data-lucide="gauge"></i> Límite de consumo</label>
+              <div class="config-input-wrap">
+                <input id="cfgLimitKwh" class="input config-input" type="number" min="10" max="1000" step="1" placeholder="100" />
+                <span class="config-unit">kWh</span>
+              </div>
+              <p class="small muted">Rango permitido: 10 a 1000.</p>
+            </div>
+
+            <div class="config-item">
+              <label class="label config-label" for="cfgTarifa"><i data-lucide="badge-dollar-sign"></i> Tarifa energética</label>
+              <div class="config-input-wrap">
+                <input id="cfgTarifa" class="input config-input" type="number" min="0.01" step="0.01" placeholder="6.85" />
+                <span class="config-unit">C$/kWh</span>
+              </div>
+              <p class="small muted">Se usa para convertir consumo a costo.</p>
+            </div>
+          </div>
+
+          <div class="config-group-head">
+            <h3 class="h3">Calibración del sensor</h3>
+            <p class="small muted">Ajustes finos para la lectura del ESP32.</p>
+          </div>
+          <div class="card-body config-grid">
+            <div class="config-item">
+              <label class="label config-label" for="cfgCcal"><i data-lucide="activity"></i> ccalibrate</label>
+              <div class="config-input-wrap">
+                <input id="cfgCcal" class="input config-input" type="number" min="0.0001" step="any" placeholder="1.00" />
+                <span class="config-unit">x</span>
+              </div>
+            </div>
+
+            <div class="config-item">
+              <label class="label config-label" for="cfgVcal"><i data-lucide="zap"></i> vcalibrate</label>
+              <div class="config-input-wrap">
+                <input id="cfgVcal" class="input config-input" type="number" min="0.0001" step="any" placeholder="1.00" />
+                <span class="config-unit">x</span>
+              </div>
+            </div>
+
+            <div class="config-item">
+              <label class="label config-label" for="cfgWmeter"><i data-lucide="ruler"></i> wmeter</label>
+              <div class="config-input-wrap">
+                <input id="cfgWmeter" class="input config-input" type="number" min="0.0001" step="any" placeholder="1.00" />
+                <span class="config-unit">x</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="config-footer">
+            <p id="configMsg" class="small muted config-msg"></p>
+            <button id="applyConfigBtn" class="btn btn-primary config-apply-btn" type="button">
+              <i data-lucide="save"></i>
+              Aplicar
+            </button>
+          </div>
+
+          <div class="config-group-head">
+            <h3 class="h3">Dispositivo y base de datos</h3>
+            <p class="small muted">Control remoto del ESP32 y borrado de datos en Firebase para tu cuenta.</p>
+          </div>
+          <div class="config-device-actions">
+            <div class="config-device-row">
+              <div class="config-device-text">
+                <strong class="small">Reiniciar ESP32</strong>
+                <p class="small muted">Escribe un valor de orden en la base de datos. El firmware debe suscribirse a esta ruta y ejecutar <code>esp_restart()</code> al detectar un cambio (ver comentarios en el código).</p>
+              </div>
+              <button id="espRestartBtn" class="btn btn-secondary" type="button" disabled>
+                <i data-lucide="refresh-cw"></i>
+                Reiniciar ESP32
+              </button>
+            </div>
+            <div class="config-device-row danger-zone">
+              <div class="config-device-text">
+                <strong class="small" style="color: var(--destructive)">Borrar datos en Firebase</strong>
+                <p class="small muted">Elimina <strong>todo</strong> lo guardado bajo tu usuario: telemetría, historial, programaciones, automatizaciones, nombres de dispositivos y configuración. No borra tu cuenta de acceso. Se pedirá confirmación.</p>
+              </div>
+              <button id="wipeDbBtn" class="btn btn-danger" type="button" disabled>
+                <i data-lucide="trash-2"></i>
+                Borrar datos
+              </button>
+            </div>
+          </div>
+
+
+        </div>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="../js/config.js"></script>
+</body>
+
+</html>
