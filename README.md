@@ -6,47 +6,47 @@ Este repositorio contiene la aplicación web estática, el firmware Arduino y lo
 
 ## Recorrido del sistema
 
-### 1. Montaje y componentes
-
-La fotografía muestra la etapa de trabajo con placas ESP32, pantalla y módulos de prueba. Sirve para identificar los bloques físicos antes de seguir las conexiones del esquema; no sustituye al esquema eléctrico ni fija los valores de cada componente.
-
-![Montaje de ESPower en la mesa de trabajo](images/PXL_20250821_044228619.jpg)
-
-### 2. Esquema completo
-
-El plano separa alimentación de 5 V a 3,3 V, lectura de tensión con ZMPT101B, lectura de corriente con SCT-013, OLED por I²C y etapa de salida con optotriac y triac. La [guía del circuito](docs/CIRCUITO.md) relaciona cada bloque con los pines del firmware y señala las diferencias que se deben verificar en la placa montada.
-
-![Esquema eléctrico completo de ESPower](<images/Schematic_Monitor_2026-10-14 (1).png>)
-
-### 3. Adaptación del transformador de corriente
-
-La señal alterna del CT confirmado de **100 A:50 mA** se convierte a voltaje con la resistencia de carga **montada de 33 Ω** y se desplaza hacia un punto medio de 1,65 V para el ADC del ESP32. El firmware usa ahora `CONSTANTE_I = 60.6`, su calibración teórica. **A 100 A la señal calculada supera 0–3,3 V** y se recorta; la [guía de cálculo y calibración](docs/CIRCUITO.md#resistencia-de-carga-del-ct) cuantifica el rango útil y explica cómo redimensionar la carga si se necesita medir hasta 100 A.
-
-![Adaptación del CT a una entrada de 3,3 V](<images/Esquema CT adaptado para ESP32.png>)
-
-### 4. Telemetría y panel principal
+### 1. Telemetría y panel principal
 
 El ESP32 publica `voltaje`, `corriente`, `potencia` y `kwh` bajo `UsersData/{uid}/telemetry`. La web escucha esas rutas después de iniciar sesión y actualiza las tarjetas de lectura y la estimación de costo. [Conexión con Firebase](docs/FIREBASE.md) describe las cuentas, rutas, reglas y archivos locales de configuración.
 
 ![Panel principal con lecturas y acumulados](images/ESP-1.png)
 
-### 5. Registro histórico
+### 2. Registro histórico
 
 El firmware escribe registros con fecha y hora obtenidas por NTP en `UsersData/{uid}/datalog/YYYY-MM-DD/HH-MM`. La web consulta registros recientes y también puede registrar muestras mientras permanece abierta. El intervalo de ambos procesos se configura por separado; consulta [flujo de datos](docs/ARQUITECTURA.md#registro-y-consumo-mensual).
 
 ![Datalogger y consumo mensual](images/ESP-2.png)
 
-### 6. Análisis
+### 3. Análisis
 
 La página de gráficos usa los datos mensuales de RTDB y el historial para mostrar consumo y costo estimado. El costo se calcula con una tarifa en **C$/kWh** configurable por cuenta; no es una factura emitida por la distribuidora.
 
 ![Gráficos de consumo energético](images/ESP-3.png)
 
-### 7. Control de dispositivos
+### 4. Control de dispositivos
 
 La web permite cambiar estados en `led`, `led1`, `led2` y `led3`, asignar nombres y definir horarios o reglas. El firmware incluido **lee `led`, controla la salida del optotriac en GPIO0 y refleja el estado en GPIO2**. Las otras tres salidas no tienen rutina de accionamiento en este sketch. GPIO0 participa en el arranque del ESP32; el [manual del firmware](docs/FIRMWARE.md#arranque-y-rutas) explica qué se debe comprobar en el hardware. La [matriz de funciones](docs/ARQUITECTURA.md#alcance-comprobado-en-el-código) muestra el alcance de cada parte.
 
 ![Vista de control de dispositivos](images/ESP-4.png)
+
+### 5. Montaje y componentes
+
+La fotografía muestra la etapa de trabajo con placas ESP32, pantalla y módulos de prueba. Sirve para identificar los bloques físicos antes de seguir las conexiones del esquema; no sustituye al esquema eléctrico ni fija los valores de cada componente.
+
+![Montaje de ESPower en la mesa de trabajo](images/PXL_20250821_044228619.jpg)
+
+### 6. Esquema completo
+
+El plano separa alimentación de 5 V a 3,3 V, lectura de tensión con ZMPT101B, lectura de corriente con SCT-013, OLED por I²C y etapa de salida con optotriac y triac. La [guía del circuito](docs/CIRCUITO.md) relaciona cada bloque con los pines del firmware y señala las diferencias que se deben verificar en la placa montada.
+
+![Esquema eléctrico completo de ESPower](<images/Schematic_Monitor_2026-10-14 (1).png>)
+
+### 7. Adaptación del transformador de corriente
+
+La señal alterna del CT confirmado de **100 A:50 mA** se convierte a voltaje con la resistencia de carga **montada de 33 Ω** y se desplaza hacia un punto medio de 1,65 V para el ADC del ESP32. El firmware usa ahora `CONSTANTE_I = 60.6`, su calibración teórica. **A 100 A la señal calculada supera 0–3,3 V** y se recorta; la [guía de cálculo y calibración](docs/CIRCUITO.md#resistencia-de-carga-del-ct) cuantifica el rango útil y explica cómo redimensionar la carga si se necesita medir hasta 100 A.
+
+![Adaptación del CT a una entrada de 3,3 V](<images/Esquema CT adaptado para ESP32.png>)
 
 ## Puesta en marcha
 
