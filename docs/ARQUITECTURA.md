@@ -28,6 +28,8 @@ flowchart LR
 
 La web usa módulos JavaScript nativos y SDK Firebase 10.12.5 desde CDN. `css/styles.css`, `assets/` y los scripts de tema/barra lateral completan las vistas. No hay build ni backend web en este repositorio; los módulos requieren un servidor estático HTTP/HTTPS.
 
+La página de contacto muestra canales de comunicación, pero el formulario `contactForm` no tiene un manejador de envío en `js/contact.js` ni un servicio receptor en este repositorio. Para reportar un problema del código, usa la sección [Issues del repositorio](https://github.com/lanuzadev/espower/issues); no se debe interpretar el formulario visual como una entrega confirmada.
+
 ## Flujo de medición y costo
 
 El firmware realiza `calcVI`, obtiene `Vrms`, `Irms`, potencia real/aparente y factor de potencia, y suma kWh. Cada 3 s nominales envía cuatro campos numéricos a `UsersData/{uid}/telemetry`. Las páginas escuchan RTDB con `onValue`. La energía acumulada reside primero en el ESP32 y se guarda en NVS cada 30 s; RTDB recibe la lectura publicada. Los cálculos se detallan en [FIRMWARE.md](FIRMWARE.md#medición-y-fórmulas).
